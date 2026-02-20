@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuePlayer - Music App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #09090b; }
+        .glass { background: rgba(24, 24, 27, 0.8); backdrop-filter: blur(12px); }
+        input[type='range']::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            background: #3b82f6;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="text-zinc-100 flex items-center justify-center min-h-screen p-4">
+
+    <!-- Mobile App Container -->
+    <div class="w-full max-w-md glass border border-zinc-800 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden">
+        
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-10">
+            <button class="p-2 hover:bg-zinc-800 rounded-full transition">
+                <i data-lucide="chevron-down"></i>
+            </button>
+            <span class="text-xs font-semibold uppercase tracking-widest text-zinc-500">Playing Now</span>
+            <button class="p-2 hover:bg-zinc-800 rounded-full transition">
+                <i data-lucide="list-music"></i>
+            </button>
+        </div>
+
+        <!-- Album Art -->
+        <div class="relative group mb-8">
+            <div class="w-full aspect-square bg-gradient-to-br from-blue-600 to-purple-700 rounded-3xl shadow-[0_20px_50px_rgba(59,130,246,0.3)] flex items-center justify-center overflow-hidden">
+                <i data-lucide="music" size="64" class="text-white/20"></i>
+                <!-- Placeholder Image -->
+                <img id="cover" src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=800&q=80" alt="Cover" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition duration-700">
+            </div>
+        </div>
+
+        <!-- Info Lagu -->
+        <div class="text-center mb-8">
+            <h2 id="title" class="text-2xl font-bold mb-1">Night City Vibes</h2>
+            <p id="artist" class="text-zinc-400">Cyberpunk Synthwave</p>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mb-10">
+            <input type="range" id="progress" value="0" class="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer mb-2">
+            <div class="flex justify-between text-[10px] text-zinc-500 font-medium">
+                <span id="currentTime">0:00</span>
+                <span id="duration">3:45</span>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="flex justify-between items-center mb-4">
+            <button class="text-zinc-500 hover:text-blue-500 transition">
+                <i data-lucide="shuffle" size="20"></i>
+            </button>
+            <div class="flex items-center gap-6">
+                <button id="prev" class="p-2 hover:bg-zinc-800 rounded-full transition">
+                    <i data-lucide="skip-back" fill="currentColor"></i>
+                </button>
+                <button id="playBtn" class="w-16 h-16 bg-blue-600 hover:bg-blue-500 rounded-full flex items-center justify-center shadow-lg shadow-blue-900/40 transition-transform active:scale-95">
+                    <i data-lucide="play" fill="currentColor" class="ml-1 text-white"></i>
+                </button>
+                <button id="next" class="p-2 hover:bg-zinc-800 rounded-full transition">
+                    <i data-lucide="skip-forward" fill="currentColor"></i>
+                </button>
+            </div>
+            <button class="text-zinc-500 hover:text-blue-500 transition">
+                <i data-lucide="repeat" size="20"></i>
+            </button>
+        </div>
+
+        <!-- Audio Element (Ganti URL source dengan file lu) -->
+        <audio id="audio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+    </div>
+
+    <script>
+        // Inisialisasi Icons
+        lucide.createIcons();
+
+        const audio = document.getElementById('audio');
+        const playBtn = document.getElementById('playBtn');
+        const progress = document.getElementById('progress');
+        const currentTimeEl = document.getElementById('currentTime');
+        const durationEl = document.getElementById('duration');
+        let isPlaying = false;
+
+        // Play/Pause Toggle
+        function togglePlay() {
+            if (isPlaying) {
+                audio.pause();
+                playBtn.innerHTML = '<i data-lucide="play" fill="currentColor" class="ml-1"></i>';
+            } else {
+                audio.play();
+                playBtn.innerHTML = '<i data-lucide="pause" fill="currentColor"></i>';
+            }
+            isPlaying = !isPlaying;
+            lucide.createIcons();
+        }
+
+        playBtn.addEventListener('click', togglePlay);
+
+        // Update Progress
+        audio.addEventListener('timeupdate', () => {
+            const { duration, currentTime } = audio;
+            const progressPercent = (currentTime / duration) * 100;
+            progress.value = progressPercent;
+
+            // Update Waktu
+            const formatTime = (time) => Math.floor(time / 60) + ":" + ("0" + Math.floor(time % 60)).slice(-2);
+            currentTimeEl.textContent = formatTime(currentTime);
+            if(duration) durationEl.textContent = formatTime(duration);
+        });
+
+        // Click on Progress Bar
+        progress.addEventListener('input', () => {
+            const seekTime = (progress.value / 100) * audio.duration;
+            audio.currentTime = seekTime;
+        });
+
+        // Simulasi tombol Next/Prev
+        document.getElementById('next').onclick = () => alert('Next Song (Fitur ini butuh array playlist)');
+        document.getElementById('prev').onclick = () => alert('Prev Song');
+
+    </script>
+</body>
+</html>
+
